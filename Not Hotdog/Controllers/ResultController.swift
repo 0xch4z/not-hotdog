@@ -42,6 +42,10 @@ class ResultController: UIViewController {
     
     let resultView: UIView = {
         let view = UIView()
+        let topBorder = CALayer()
+        topBorder.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 3)
+        topBorder.backgroundColor = UIColor.white.cgColor
+        view.layer.addSublayer(topBorder)
         view.alpha = 0
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -65,6 +69,21 @@ class ResultController: UIViewController {
         return label
     }()
     
+    let isHotdogImage: UIImageView = {
+        let image = UIImageView()
+        image.translatesAutoresizingMaskIntoConstraints = false
+        return image
+    }()
+    
+    let isHotdogImageContainer: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 40
+        view.layer.borderWidth = 3
+        view.layer.borderColor = UIColor.white.cgColor
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     override var prefersStatusBarHidden: Bool {
         return true
     }
@@ -75,8 +94,10 @@ class ResultController: UIViewController {
         setupImageView()
         setupDismissButton()
         setupResultView()
-        setupResultLabel()
+        setupIsHotdogImageContainer()
+        setupIsHotdogImage()
         setupIsHotdogLabel()
+        setupResultLabel()
     }
     
 }
@@ -110,21 +131,37 @@ fileprivate extension ResultController {
     func setupResultView() {
         resultView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         resultView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-        resultView.heightAnchor.constraint(equalToConstant: 200).isActive = true
+        resultView.heightAnchor.constraint(equalToConstant: 145).isActive = true
+        resultView.addSubview(isHotdogImageContainer)
         resultView.addSubview(resultLabel)
         resultView.addSubview(isHotdogLabel)
     }
     
-    func setupResultLabel() {
-        resultLabel.widthAnchor.constraint(equalTo: resultView.widthAnchor).isActive = true
-        resultLabel.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        resultLabel.topAnchor.constraint(equalTo: resultView.topAnchor).isActive = true
+    func setupIsHotdogImageContainer() {
+        isHotdogImageContainer.topAnchor.constraint(equalTo: resultView.topAnchor, constant: -40).isActive = true
+        isHotdogImageContainer.centerXAnchor.constraint(equalTo: resultView.centerXAnchor).isActive = true
+        isHotdogImageContainer.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        isHotdogImageContainer.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        isHotdogImageContainer.addSubview(isHotdogImage)
+    }
+    
+    func setupIsHotdogImage() {
+        isHotdogImage.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        isHotdogImage.widthAnchor.constraint(equalToConstant: 60).isActive = true
+        isHotdogImage.centerXAnchor.constraint(equalTo: isHotdogImageContainer.centerXAnchor).isActive = true
+        isHotdogImage.centerYAnchor.constraint(equalTo: isHotdogImageContainer.centerYAnchor).isActive = true
     }
     
     func setupIsHotdogLabel() {
-        isHotdogLabel.heightAnchor.constraint(equalToConstant: 100)
-        isHotdogLabel.topAnchor.constraint(equalTo: resultLabel.bottomAnchor).isActive = true
+        isHotdogLabel.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        isHotdogLabel.topAnchor.constraint(equalTo: resultView.topAnchor, constant: 50).isActive = true
         isHotdogLabel.widthAnchor.constraint(equalTo: resultView.widthAnchor).isActive = true
+    }
+    
+    func setupResultLabel() {
+        resultLabel.widthAnchor.constraint(equalTo: resultView.widthAnchor).isActive = true
+        resultLabel.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        resultLabel.bottomAnchor.constraint(equalTo: resultView.bottomAnchor, constant: -10).isActive = true
     }
     
 }
@@ -158,7 +195,10 @@ fileprivate extension ResultController {
         // get classification
         guard let classification = self.classification else { return }
         let isHotdog = classification == "hotdog"
-        resultView.backgroundColor = isHotdog ? .green : .red
+        let color: UIColor = isHotdog ? .green : .red
+        resultView.backgroundColor = color
+        isHotdogImageContainer.backgroundColor = color
+        isHotdogImage.image = isHotdog ? #imageLiteral(resourceName: "Hotdog") : #imageLiteral(resourceName: "NotHotdog")
         isHotdogLabel.text = isHotdog ? "It's a hotdog!" : "It's a not-hotdog!"
         resultLabel.text = classification
         // animate view in
